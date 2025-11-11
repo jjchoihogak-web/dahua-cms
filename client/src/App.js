@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import CameraList from './components/CameraList';
 import Header from './components/Header';
@@ -11,7 +11,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const fetchCameras = async () => {
+  const fetchCameras = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -33,14 +33,14 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, statusFilter]);
 
   useEffect(() => {
     fetchCameras();
     // Auto refresh every 30 seconds
     const interval = setInterval(fetchCameras, 30000);
     return () => clearInterval(interval);
-  }, [searchTerm, statusFilter]);
+  }, [fetchCameras]);
 
   const handleDelete = async (id) => {
     if (window.confirm('이 카메라를 삭제하시겠습니까?')) {
